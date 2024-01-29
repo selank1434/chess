@@ -10,26 +10,60 @@ import Chessboard from './components/Chessboard';
 import Piece from './components/Piece';
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import black_pawn from './pawn_b.png';
+import white_pawn from './pawn_w.png';
+import black_knight from './knight_b.png';
+import white_knight from './knight_w.png';
+import black_bishop from './bishop_b.png';
+import white_bishop from './bishop_w.png';
+import black_rook from './rook_b.png';
+import white_rook from './rook_w.png';
+import black_queen from './queen_b.png';
+import white_queen from './queen_w.png';
+import black_king from './king_b.png';
+import white_king from './king_w.png';
 
 
 
-export const create_pawn = (coord :coordinate) => {
-  //This makes all our pawns 
-    const pawn = {color: side.black, piece: piece_type.Pawn, start: coord, curr: coord} as piece;
-    return {occupied: true, pieceType: pawn, color: side.black} as boardSquareProps;
-   
-}
-const create_piece = (coord:coordinate, type: piece_type) => {
-  const queen = {color: side.black, piece: piece_type.Pawn, start: coord, curr: coord} as piece;
-  return {color: coord.x === 0 ? side.black : side.white, curr: coord, start:coord, occupied: true, pieceType: queen} as boardSquareProps;
-}
 
-const create_empty = (coord: coordinate) => {
-    return (coord.x+coord.y) %2 ? {color: side.black ,occupied: false} as boardSquareProps : {color: side.white ,occupied: false} as boardSquareProps;
-}
 
 
 //start with the 
+
+const create_piece = (coord: coordinate, piece: piece_type, src: string): piece => {
+
+  return  {color: coord.x ? side.white : side.black, piece: piece ,start: coord, curr: coord, src: src};
+
+}
+
+const render_piece = (coord: coordinate) => {
+  if(coord.x === 1){
+    return create_piece(coord,piece_type.Pawn,black_pawn);
+  }
+  else if (coord.x === 6){
+    return create_piece(coord,piece_type.Pawn,white_pawn);
+  }
+  else if(coord.y === 0 || coord.y === 7){
+    return coord.x ? create_piece(coord,piece_type.Rook,white_rook) :create_piece(coord,piece_type.Rook,black_rook)
+  }
+  else if(coord.y === 1 || coord.y === 6){
+    return coord.x ? create_piece(coord, piece_type.Knight,white_knight) : create_piece(coord, piece_type.Knight,black_knight);
+  }
+  else if(coord.y === 2 || coord.y === 5){
+    return coord.x ?  create_piece(coord,piece_type.Bishop,white_bishop) : create_piece(coord,piece_type.Bishop,black_bishop);
+  }
+  else if(coord.y === 3 ){
+    return  coord.x ? create_piece(coord, piece_type.Queen,white_queen) : create_piece(coord, piece_type.Queen,black_queen) ;
+  }
+  else{
+    return  coord.x ? create_piece(coord, piece_type.King,white_king) : create_piece(coord, piece_type.King,black_king) ;
+  }
+
+
+};
+
+
+
 const generateGrid = () => {
     const grid :boardSquareProps [][]= [];
     for (let i = 0; i < 8; i++) {
@@ -38,15 +72,15 @@ const generateGrid = () => {
           const coord = {x: i, y: j} as coordinate;
           if (i < 2 || i > 5){
               if(i === 1 || i === 7){
-                grid[i].push(create_pawn(coord));
+                grid[i].push({occupied: true, color: side.black, pieceType: render_piece(coord)} as boardSquareProps);
               }
               else{
                 //how do I do this I want to 
-                grid[i].push(create_pawn(coord));
+                grid[i].push({occupied: true, color: side.black, pieceType: render_piece(coord)} as boardSquareProps);
               }
           }
           else{
-            grid[i].push(create_empty(coord));
+            grid[i].push({occupied: true, color: side.black } as boardSquareProps);
           }
         }
     }
@@ -63,33 +97,11 @@ function App() {
   const [parent, setParent] = useState<string | null>(null);
 
 
-  // return (
-  //   <DndContext onDragEnd={handleDragEnd}>
-  //     {!parent ? draggable : null}
-  //     <Droppable id="droppable">
-  //       {parent === "droppable" ? draggable : 'Drop here'}
-  //     </Droppable>
-  //   </DndContext>
-  // );
-
-  function handleDragEnd(event: DragEndEvent) {
-    const overId = event.over?.id;
-    setParent((overId as string) || null);
-   // Explicitly using null here to satisfy the type
-  }
-  const handleDrop = () => {
-    console.log('Image dropped!');
-    // Handle the dropped image as needed
-  };
-
   return (
     <div className="App">
       <header className="App-header">
-        {/* <DragComponent col={0} row={0}/>
-        <DropComponent col = {0} row={0}/> */}
+
         <DndProvider backend={HTML5Backend}>
-        {/* <ImageComponent/>
-        <TargetComponent/> */}
         <Chessboard board={board} setBoardState={setBoardState}/>
         </DndProvider>
         <a

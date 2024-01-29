@@ -17,20 +17,30 @@ export interface coordinate{
 }
 
 
+
+
+export interface boardProps {
+    board: boardSquareProps[][],
+    coord: coordinate,
+    setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>
+}
+
+//board squares do not move we just keep the same index 
+//to move a board square we get a occupied a color and a piece type why the hell does the piece have a coordinate 
+//just 
+
+
 export interface piece{
     color: side,
     piece: piece_type,
     start: coordinate,
     curr: coordinate
+    src: string
 }
 
-
-
-//board squares do not move we just keep the same index 
-//to move a board square we get a occupied a color and a piece type why the hell does the piece have a coordinate 
-//just 
 export interface boardSquareProps{
     occupied: Boolean,
     color: side,
     pieceType?:piece
 }
+

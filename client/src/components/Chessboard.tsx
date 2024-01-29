@@ -1,6 +1,10 @@
 import React from 'react';
-import { boardSquareProps } from '../types';
+import { boardSquareProps, coordinate, piece_type , side} from '../types';
 import Boardsquare from './Boardsquare';
+
+
+
+
 
 interface ChessboardProps {
   board: boardSquareProps[][];
@@ -21,12 +25,15 @@ const grab_piece = (e: React.MouseEvent) => {
 
 
 
+
+
 const Chessboard: React.FC<ChessboardProps> = ({ board, setBoardState }) => {
   const generateBoardSquare = () => {
     const grid: JSX.Element[] = [];
     board.forEach((row, i) =>
       row.forEach((col, j) =>
-        grid.push(Boardsquare(board,{x: i, y: j},setBoardState))
+        //based on my coordinate I can push the piece 
+        grid.push(<Boardsquare board={board} setBoardState={setBoardState} coord={{x: i, y:j}}/>)
       )
     );
 

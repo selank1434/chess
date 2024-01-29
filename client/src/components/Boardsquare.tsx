@@ -1,10 +1,8 @@
 import React from 'react';
-import black from '../static_elements/black-square.jpg';
-import white from '../static_elements/white_square.png';
-import black_pawn from '../static_elements/tester.jpeg';
+
 import Tile from './Tile';
 import Piece from './Piece';
-import { boardSquareProps, coordinate, piece_type } from '../types';
+import { boardProps, boardSquareProps, coordinate, piece_type, side } from '../types';
 import { useDroppable } from '@dnd-kit/core';
 
 
@@ -26,13 +24,9 @@ const gridItemStyle: React.CSSProperties = {
 
 
 //every borad square needs to know about parent board state otherewise 
-const Boardsquare = (board: boardSquareProps[][], coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>) => {
-  
-  const id = `${coord.x}${coord.y}`;
+const Boardsquare: React.FC<boardProps> = ({board, coord , setBoardState}) => {
+  const currSquare: boardSquareProps = board[coord.x][coord.y];
 
-
-
-  const currSquare = board[coord.x][coord.y];
   if(currSquare.pieceType === undefined){
     return (
       <div style={gridItemStyle}>
@@ -40,11 +34,14 @@ const Boardsquare = (board: boardSquareProps[][], coord: coordinate, setBoardSta
     </div>
     )
   }
+  //Now what I am looking fo is render piece based on only coordinate problem is what if piece alreayd exists 
+
+
+
   return (
     <div style={gridItemStyle}>
-
       {Tile({board,coord,setBoardState})}
-      {currSquare.occupied ? <Piece board={board} setBoardState={setBoardState} coord={coord}/> : null}
+      <Piece {...currSquare.pieceType}/>
     </div>
   );
 };
