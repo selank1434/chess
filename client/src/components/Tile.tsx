@@ -3,8 +3,12 @@ import { boardSquareProps, coordinate, piece, piece_type, side } from "../types"
 import { useDrop } from 'react-dnd';
 import black_tile from '../brown_square.jpeg'
 import white_tile from '../tan_square.jpeg';
+import { referee } from './Referee';
 
 
+
+
+//Coord is the coordinate of our tile 
 const Tile: React.FC<{
     board: boardSquareProps[][];
     coord: coordinate;
@@ -15,39 +19,50 @@ const Tile: React.FC<{
     const [{ isOver }, drop] = useDrop({
         accept: 'IMAGE',
         drop(item, monitor) {
-            // Access the drag source information
             const dragSource : piece = monitor.getItem();
-            updateOurBoard(board,coord,setBoardState,dragSource);
-            
-            // Handle the drop logic here
+            console.log(dragSource);
+
+            updateOurBoard(coord,setBoardState,dragSource);
+        
           },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
     });
 
-    const updateOurBoard = (board: boardSquareProps[][], coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) => {
+    //we need to know two things where our piece is moving from and where it is
+    const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) => {
+        setBoardState(prevGrid => {
+            const res = referee(dragSource.curr,coord,prevGrid);
+            if(res === false){
+                console.log("ref is saying no");
+                return prevGrid;
+            }
+            //In our previous grid we have 
 
-        const newGrid = [...board];
+
+            const newGrid = [...prevGrid]; // Copy the outer array
+            //where piece is orignally located
+            const old_x = dragSource.curr.x;
+            const old_y = dragSource.curr.y;
+            // where  piece wants t fo 
+            const new_x = coord.x;
+            const new_y = coord.y;
 
 
 
-        const updatedPiece: piece = {
-            ...dragSource, 
-            curr: {x: coord.x, y: coord.y}
-        };
+            console.log("new location x: ", new_x, " y: ",new_y );
+            console.log("old location x: ", old_x, " y: ",old_y );
+            newGrid[new_x] = [...prevGrid[new_x]]; // Copy inner array
+            const new_piece = {...dragSource, curr: coord};
 
-
-        const newValue = { occupied: true, color: side.black, pieceType: updatedPiece } as boardSquareProps;
-        newGrid[coord.x][coord.y] = newValue;
-        
-        //I also want to get the logic in order to get rid of the old one how do I know where a piece is ocming from 
-        // console.log(dragSource);
-        newGrid[dragSource.curr.x][dragSource.curr.y].pieceType = undefined;
-
-        // console.log(newGrid);
-        // // Update the state with the new grid
-        setBoardState(newGrid);
+            newGrid[new_x][new_y].pieceType = new_piece;
+            newGrid[new_x][new_y].occupied  = true;
+            newGrid[old_x][old_y].occupied = false;
+            newGrid[old_x][old_y].pieceType = undefined;
+            console.log()
+            return newGrid;
+          });
     }
 
     return (

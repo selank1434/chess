@@ -11,19 +11,6 @@ interface ChessboardProps {
   setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>;
 }
 
-const grab_piece = (e: React.MouseEvent) => {
-    const element = e.target as HTMLElement;
-    if(element.classList.contains("piece")){
-      console.log(e.screenX);
-      element.style.position="absolute";
-      element.style.left = `${e.clientX}px`;
-      element.style.top = `${e.clientY}px`;
-    }
-}
-
-
-
-
 
 
 

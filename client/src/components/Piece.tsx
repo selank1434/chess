@@ -1,6 +1,6 @@
 import { useDrag } from 'react-dnd';
 import { useMemo, useState } from 'react';
-import { boardSquareProps, coordinate, piece } from '../types';
+import { boardSquareProps, coordinate, piece, piece_type } from '../types';
 import { useDraggable } from '@dnd-kit/core';
 
 const overlayStyle: React.CSSProperties = {
@@ -14,7 +14,6 @@ const overlayStyle: React.CSSProperties = {
 
 
 const Piece: React.FC<piece> = (props) => {
-
     const [{ isDragging }, drag] = useDrag({
         type: 'IMAGE',
         item:  props ,

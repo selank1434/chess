@@ -26,7 +26,7 @@ const gridItemStyle: React.CSSProperties = {
 //every borad square needs to know about parent board state otherewise 
 const Boardsquare: React.FC<boardProps> = ({board, coord , setBoardState}) => {
   const currSquare: boardSquareProps = board[coord.x][coord.y];
-
+  
   if(currSquare.pieceType === undefined){
     return (
       <div style={gridItemStyle}>
@@ -34,10 +34,6 @@ const Boardsquare: React.FC<boardProps> = ({board, coord , setBoardState}) => {
     </div>
     )
   }
-  //Now what I am looking fo is render piece based on only coordinate problem is what if piece alreayd exists 
-
-
-
   return (
     <div style={gridItemStyle}>
       {Tile({board,coord,setBoardState})}

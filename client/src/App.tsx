@@ -30,33 +30,33 @@ import white_king from './king_w.png';
 
 //start with the 
 
-const create_piece = (coord: coordinate, piece: piece_type, src: string): piece => {
+const create_piece = (coord: coordinate, piece: piece_type, src: string, side: side): piece => {
 
-  return  {color: coord.x ? side.white : side.black, piece: piece ,start: coord, curr: coord, src: src};
+  return  {color: side, piece: piece ,start: coord, curr: coord, src: src};
 
 }
 
 const render_piece = (coord: coordinate) => {
   if(coord.x === 1){
-    return create_piece(coord,piece_type.Pawn,black_pawn);
+    return create_piece(coord,piece_type.Pawn,black_pawn,side.black);
   }
   else if (coord.x === 6){
-    return create_piece(coord,piece_type.Pawn,white_pawn);
+    return create_piece(coord,piece_type.Pawn,white_pawn,side.white);
   }
   else if(coord.y === 0 || coord.y === 7){
-    return coord.x ? create_piece(coord,piece_type.Rook,white_rook) :create_piece(coord,piece_type.Rook,black_rook)
+    return coord.x  === 7 ? create_piece(coord,piece_type.Rook,white_rook, side.white) :create_piece(coord,piece_type.Rook,black_rook,side.black);
   }
   else if(coord.y === 1 || coord.y === 6){
-    return coord.x ? create_piece(coord, piece_type.Knight,white_knight) : create_piece(coord, piece_type.Knight,black_knight);
+    return coord.x === 7 ? create_piece(coord, piece_type.Knight,white_knight,side.white) : create_piece(coord, piece_type.Knight,black_knight, side.black);
   }
   else if(coord.y === 2 || coord.y === 5){
-    return coord.x ?  create_piece(coord,piece_type.Bishop,white_bishop) : create_piece(coord,piece_type.Bishop,black_bishop);
+    return coord.x === 7?  create_piece(coord,piece_type.Bishop,white_bishop, side.white) : create_piece(coord,piece_type.Bishop,black_bishop, side.black);
   }
   else if(coord.y === 3 ){
-    return  coord.x ? create_piece(coord, piece_type.Queen,white_queen) : create_piece(coord, piece_type.Queen,black_queen) ;
+    return  coord.x === 7 ? create_piece(coord, piece_type.Queen,white_queen, side.white) : create_piece(coord, piece_type.Queen,black_queen, side.black) ;
   }
   else{
-    return  coord.x ? create_piece(coord, piece_type.King,white_king) : create_piece(coord, piece_type.King,black_king) ;
+    return  coord.x === 7 ? create_piece(coord, piece_type.King,white_king, side.white) : create_piece(coord, piece_type.King,black_king, side.black) ;
   }
 
 
@@ -80,7 +80,7 @@ const generateGrid = () => {
               }
           }
           else{
-            grid[i].push({occupied: true, color: side.black } as boardSquareProps);
+            grid[i].push({occupied: false, color: side.black } as boardSquareProps);
           }
         }
     }
@@ -95,8 +95,6 @@ function App() {
   const [board,setBoardState] = useState(generateGrid());
   const [isDropped, setIsDropped] = useState(false);
   const [parent, setParent] = useState<string | null>(null);
-
-
   return (
     <div className="App">
       <header className="App-header">
