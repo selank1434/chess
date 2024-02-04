@@ -27,7 +27,8 @@ public class ProductController {
         // You can return a response indicating the successful creation of the piece
         return pieceRequest;
     }
-    @GetMapping("/a")
+    
+    @GetMapping("/getSquare")
     public board_square showBoard(){
         return chessBoard.getBoard_square(0,0);
     }

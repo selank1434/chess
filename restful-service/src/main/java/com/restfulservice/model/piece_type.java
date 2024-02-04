@@ -5,5 +5,6 @@ public enum piece_type {
     KNIGHT,
     BISHOP,
     KING,
-    QUEEN
+    QUEEN,
+    PAWN
 }

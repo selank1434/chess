@@ -1,7 +1,7 @@
 package com.restfulservice.model;
 
 import java.util.Optional;
-
+import com.restfulservice.model.piece;
 public class board_square {
     private boolean occupied;
     private Optional<piece> piece;

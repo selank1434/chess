@@ -2,9 +2,9 @@ package com.restfulservice.model;
 
 public class piece {
     private piece_type pieceType;
-    private color side;
+    private side side;
 
-    public piece(piece_type pieceType, color side) {
+    public piece(piece_type pieceType, side side) {
         this.pieceType = pieceType;
         this.side = side;
     }
@@ -13,7 +13,7 @@ public class piece {
         return pieceType;
     }
 
-    public color getSide() {
+    public side getSide() {
         return side;
     }
 }
