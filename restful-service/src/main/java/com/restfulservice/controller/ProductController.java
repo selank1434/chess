@@ -58,11 +58,9 @@ public class ProductController {
             PrintWriter writer = new PrintWriter(outputStream);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         
-            // Send a command to Stockfish to trigger a response
             writer.println("uci");
             writer.flush();
-        
-            // Read response from Stockfish
+
             String res = "";
             String response = reader.readLine();
             while (response != null && !response.equals("uciok")) {
@@ -71,15 +69,21 @@ public class ProductController {
                 response = reader.readLine();
             }
             System.out.println("Made it out");
-            // writer.println("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            // writer.flush();
-            // System.out.println(reader.readLine());
+            writer.println("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+            writer.println("go depth 10");
+            writer.flush();
+            while (response != null && !response.startsWith("bestmove")) {
+                System.out.println(response);
+                res += response;s
+                response = reader.readLine();
+            }
+            System.out.println("Made it out part 2");
 
             writer.close();
             reader.close();
             // Destroy the process
             process.destroy();
-            return res;
+            return response;
         }
         catch (IOException e){
             System.err.println(e);
