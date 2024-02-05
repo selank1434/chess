@@ -50,7 +50,7 @@ public class ProductController {
     }
 
     @GetMapping("/analyze")
-    public String analyzeChess() {
+    public String analyzeChess(@RequestParam("depth") String depth,@RequestParam("fen") String fen) {
         try{
             Process process = Runtime.getRuntime().exec("stockfish");
 
@@ -69,12 +69,12 @@ public class ProductController {
                 response = reader.readLine();
             }
             System.out.println("Made it out");
-            writer.println("position fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-            writer.println("go depth 10");
+            writer.println("position fen "+fen);
+            writer.println("go depth "+depth);
             writer.flush();
             while (response != null && !response.startsWith("bestmove")) {
                 System.out.println(response);
-                res += response;s
+                res += response;
                 response = reader.readLine();
             }
             System.out.println("Made it out part 2");
