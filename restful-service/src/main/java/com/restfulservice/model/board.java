@@ -41,5 +41,9 @@ public class board {
     public board_square getBoard_square(int row, int col){
         return squares[row][col];
     }
+    public board_square setBoard_square(int row, int col, board_square new_square){
+        squares[row][col] = new_square;
+        return squares[row][col];
+    }
     
 }
