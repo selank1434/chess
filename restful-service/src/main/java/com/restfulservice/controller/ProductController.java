@@ -22,13 +22,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 
 
 @RestController
 public class ProductController {
 
     board chessBoard = new board();
-    
+
+
+    private Process process;
+    private PrintWriter writer;
+    private BufferedReader reader;
+
+    @Autowired
+    public ProductController() {
+        try {
+            process = Runtime.getRuntime().exec("stockfish");
+            writer = new PrintWriter(process.getOutputStream());
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/")
     public String hello(){
         return "Hello wolrd";
@@ -49,26 +71,21 @@ public class ProductController {
         return chessBoard.getBoard_square(1,0);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/analyze")
     public String analyzeChess(@RequestParam("depth") String depth,@RequestParam("fen") String fen) {
         try{
-            Process process = Runtime.getRuntime().exec("stockfish");
-
-            OutputStream outputStream = process.getOutputStream();
-            PrintWriter writer = new PrintWriter(outputStream);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        
             writer.println("uci");
             writer.flush();
-
             String res = "";
+ 
             String response = reader.readLine();
             while (response != null && !response.equals("uciok")) {
-                System.out.println(response);
                 res += response;
                 response = reader.readLine();
             }
-            System.out.println("Made it out");
+            System.out.println(fen);
+    
             writer.println("position fen "+fen);
             writer.println("go depth "+depth);
             writer.flush();
@@ -77,12 +94,6 @@ public class ProductController {
                 res += response;
                 response = reader.readLine();
             }
-            System.out.println("Made it out part 2");
-
-            writer.close();
-            reader.close();
-            // Destroy the process
-            process.destroy();
             return response;
         }
         catch (IOException e){

@@ -4,6 +4,7 @@ import { useDrop } from 'react-dnd';
 import black_tile from '../brown_square.jpeg'
 import white_tile from '../tan_square.jpeg';
 import { referee } from './Referee';
+import { getAImove } from '../Translation/SendToServer';
 
 
 
@@ -23,6 +24,16 @@ const Tile: React.FC<{
             console.log(dragSource);
 
             updateOurBoard(coord,setBoardState,dragSource);
+   
+            const getAImoveAsync = async () => {
+                const resp = await getAImove(board);
+                console.log(resp);
+                return resp;
+            };
+        
+            //ok here we go what happens
+            getAImoveAsync();
+            
         
           },
         collect: (monitor) => ({
@@ -51,8 +62,7 @@ const Tile: React.FC<{
 
 
 
-            console.log("new location x: ", new_x, " y: ",new_y );
-            console.log("old location x: ", old_x, " y: ",old_y );
+        
             newGrid[new_x] = [...prevGrid[new_x]]; // Copy inner array
             const new_piece = {...dragSource, curr: coord};
 
@@ -60,8 +70,8 @@ const Tile: React.FC<{
             newGrid[new_x][new_y].occupied  = true;
             newGrid[old_x][old_y].occupied = false;
             newGrid[old_x][old_y].pieceType = undefined;
-            console.log()
             return newGrid;
+
           });
     }
 
