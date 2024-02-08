@@ -40,7 +40,6 @@ export interface piece{
 
 export interface boardSquareProps{
     occupied: Boolean,
-    color: side,
     pieceType?:piece
 }
 

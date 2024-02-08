@@ -86,7 +86,7 @@ public class ProductController {
             }
             System.out.println(fen);
     
-            writer.println("position fen "+fen);
+            writer.println("position fen "+fen + " b");
             writer.println("go depth "+depth);
             writer.flush();
             while (response != null && !response.startsWith("bestmove")) {

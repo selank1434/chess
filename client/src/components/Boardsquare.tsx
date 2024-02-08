@@ -27,16 +27,17 @@ const gridItemStyle: React.CSSProperties = {
 const Boardsquare: React.FC<boardProps> = ({board, coord , setBoardState}) => {
   const currSquare: boardSquareProps = board[coord.x][coord.y];
   
+
   if(currSquare.pieceType === undefined){
     return (
       <div style={gridItemStyle}>
-      {Tile({board,coord,setBoardState})}
+      <Tile board={board} coord={coord} setBoardState={setBoardState}/>
     </div>
     )
   }
   return (
     <div style={gridItemStyle}>
-      {Tile({board,coord,setBoardState})}
+      <Tile board={board} coord={coord} setBoardState={setBoardState}/>
       <Piece {...currSquare.pieceType}/>
     </div>
   );

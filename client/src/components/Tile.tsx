@@ -5,6 +5,10 @@ import black_tile from '../brown_square.jpeg'
 import white_tile from '../tan_square.jpeg';
 import { referee } from './Referee';
 import { getAImove } from '../Translation/SendToServer';
+import { render_piece } from '../App';
+import { Console } from 'console';
+
+// Usage example:
 
 
 
@@ -21,26 +25,21 @@ const Tile: React.FC<{
         accept: 'IMAGE',
         drop(item, monitor) {
             const dragSource : piece = monitor.getItem();
-            console.log(dragSource);
-
             updateOurBoard(coord,setBoardState,dragSource);
-   
-            const getAImoveAsync = async () => {
-                const resp = await getAImove(board);
-                console.log(resp);
-                return resp;
-            };
-        
-            //ok here we go what happens
-            getAImoveAsync();
-            
+            getAImove(board).then(response => {
+                console.log(response);
+                generate_coordinates(response,setBoardState);
+
+            }).catch(error => {
+                console.error('Error occurred:', error);
+                // Handle errors if needed
+            });
         
           },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
     });
-
     //we need to know two things where our piece is moving from and where it is
     const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) => {
         setBoardState(prevGrid => {
@@ -62,14 +61,21 @@ const Tile: React.FC<{
 
 
 
-        
+            
             newGrid[new_x] = [...prevGrid[new_x]]; // Copy inner array
-            const new_piece = {...dragSource, curr: coord};
+            const temp = dragSource;
+            console.log("drag source info " ,temp);
+            const new_piece = {...temp, curr: coord};
+            console.log(new_piece);
+            newGrid[new_x][new_y] = { pieceType: new_piece, occupied: true} as boardSquareProps;
 
-            newGrid[new_x][new_y].pieceType = new_piece;
-            newGrid[new_x][new_y].occupied  = true;
             newGrid[old_x][old_y].occupied = false;
             newGrid[old_x][old_y].pieceType = undefined;
+
+            console.log("My old square is updated as follows x: ", old_x, " y: ", old_y, newGrid[old_x][old_y]);
+            console.log("My new square is updated as follows x: ", new_x, " y: ", new_y, newGrid[new_x][new_y]);
+            console.log("this is our board after we updates ", newGrid);
+
             return newGrid;
 
           });
@@ -105,5 +111,77 @@ const Tile: React.FC<{
         </div>
     );
 }
+
+
+const translateChessCoordinatesToIndex = (chessCoordinates: string): [number, number]  => {
+    const columnMap: { [key: string]: number } = {
+        'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7
+    };
+
+    if (chessCoordinates.length !== 2) {
+        console.error("Invalid input: Chess coordinates must be in the format 'e7'");
+        return [-1,-1];
+    }
+
+    const columnChar = chessCoordinates.charAt(0);
+    const rowChar = chessCoordinates.charAt(1);
+
+    if (!(columnChar in columnMap) || isNaN(Number(rowChar))) {
+        console.error("Invalid input: Chess coordinates must be in the format 'e7'");
+        return [-1,-1];
+    }
+
+    const column = columnMap[columnChar];
+    const row = 8 - parseInt(rowChar, 10);
+
+    return [row, column];
+}
+
+
+
+const generate_coordinates = (stockfish_res: String, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>> ) => {;
+    // bestmove e7e5 ponder a2a3
+
+    const move_string = stockfish_res.split(" ")[1];
+    const startSquare: string = move_string.substring(0, 2);
+    const endSquare: string = move_string.substring(2);
+
+
+    const old_coords = translateChessCoordinatesToIndex(startSquare);
+    const new_coords = translateChessCoordinatesToIndex(endSquare);
+
+    setBoardState(prevGrid => {
+        const old_x = old_coords[0];
+        const old_y = old_coords[1];
+    
+        const new_x = new_coords[0];
+        const new_y = new_coords[1];
+    
+
+        const newGrid = prevGrid.map(innerArray => [...innerArray]);
+    
+
+        const pieceFromOldCoords = prevGrid[old_x][old_y].pieceType;
+    
+        const occupied = true;
+        newGrid[new_x][new_y] = { occupied, pieceType: pieceFromOldCoords };
+    
+        newGrid[old_x][old_y] = { occupied: false, pieceType: undefined };
+    
+        console.log("old spot: x: ", old_x, " y: ", old_y, prevGrid[old_x][old_y]);
+        console.log("new spot: x: ", new_x, " y: ", new_y, prevGrid[new_x][new_y]);
+    
+        return newGrid;
+    });
+    
+    
+
+
+
+
+}
+
+
+
 
 export default Tile;

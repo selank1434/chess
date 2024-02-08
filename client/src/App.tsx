@@ -36,7 +36,14 @@ const create_piece = (coord: coordinate, piece: piece_type, src: string, side: s
 
 }
 
-const render_piece = (coord: coordinate) => {
+
+
+
+
+
+export const render_piece = (coord: coordinate): piece => {
+
+
   if(coord.x === 1){
     return create_piece(coord,piece_type.Pawn,black_pawn,side.black);
   }
@@ -72,7 +79,8 @@ const generateGrid = () => {
           const coord = {x: i, y: j} as coordinate;
           if (i < 2 || i > 5){
               if(i === 1 || i === 7){
-                grid[i].push({occupied: true, color: side.black, pieceType: render_piece(coord)} as boardSquareProps);
+                
+                grid[i].push({occupied: true, color: side.black, pieceType: render_piece(coord)} as boardSquareProps)
               }
               else{
                 //how do I do this I want to 
