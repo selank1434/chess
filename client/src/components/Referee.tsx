@@ -5,6 +5,7 @@ import { pawn_move } from "../rules/PawnRules";
 import { movingKnight } from "../rules/KnightRules";
 import { bishop_move } from "../rules/BishopRules";
 import { move_rook } from "../rules/RookRules";
+import { movingQueen } from "../rules/QueenRules";
 
 export const referee = (start: coordinate, end: coordinate, board: boardSquareProps[][]) => {
 
@@ -33,6 +34,12 @@ export const referee = (start: coordinate, end: coordinate, board: boardSquarePr
         const res = move_rook(start,end,board);
         return res;
         // return move_rook(start,end,board);
+    }
+    else if(piece.piece === piece_type.Queen){
+       return movingQueen(start,end,board);
+    }
+    else{
+        
     }
 
 }

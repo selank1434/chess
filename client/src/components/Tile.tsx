@@ -25,15 +25,21 @@ const Tile: React.FC<{
         accept: 'IMAGE',
         drop(item, monitor) {
             const dragSource : piece = monitor.getItem();
-            updateOurBoard(coord,setBoardState,dragSource);
-            getAImove(board).then(response => {
-                console.log(response);
-                generate_coordinates(response,setBoardState);
-
-            }).catch(error => {
-                console.error('Error occurred:', error);
-                // Handle errors if needed
-            });
+            const update = updateOurBoard(coord,setBoardState,dragSource);
+            if (update){
+                setTimeout(() => {
+                    getAImove(board)
+                        .then(response => {
+                            console.log(response);
+                            generate_coordinates(response, setBoardState);
+                        })
+                        .catch(error => {
+                            console.error('Error occurred:', error);
+                        });
+                    }, 1000); 
+                
+            }
+       
         
           },
         collect: (monitor) => ({
@@ -41,10 +47,13 @@ const Tile: React.FC<{
         }),
     });
     //we need to know two things where our piece is moving from and where it is
-    const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) => {
+    const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) : void | boolean => {
+        
+        let updated: boolean = true;
         setBoardState(prevGrid => {
             const res = referee(dragSource.curr,coord,prevGrid);
             if(res === false){
+                updated = false;
                 console.log("ref is saying no");
                 return prevGrid;
             }
@@ -79,6 +88,7 @@ const Tile: React.FC<{
             return newGrid;
 
           });
+          return updated;
     }
 
     return (
