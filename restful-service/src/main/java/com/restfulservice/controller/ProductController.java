@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +30,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import java.net.ServerSocket; // For creating a server socket
+import java.net.Socket; // For creating a client socket
+import java.net.InetAddress; // For representing IP addresses
+import java.io.IOException; // For handling I/O exceptions
+import java.io.InputStream; // For reading from a socket
+import java.io.OutputStream; // For writing to a socket
+
 
 @RestController
 public class ProductController {
@@ -39,17 +47,25 @@ public class ProductController {
     private Process process;
     private PrintWriter writer;
     private BufferedReader reader;
-
+    private ServerSocket serverSocket;
+    
     @Autowired
     public ProductController() {
         try {
+            //this is creating a process that will be used to 
             process = Runtime.getRuntime().exec("stockfish");
             writer = new PrintWriter(process.getOutputStream());
             reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            serverSocket = new ServerSocket(6000);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+
+
+
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/")
     public String hello(){
@@ -84,13 +100,48 @@ public class ProductController {
                 res += response;
                 response = reader.readLine();
             }
-            System.out.println(fen);
+            System.out.println("Here is the fen string i got: " +fen);
     
-            writer.println("position fen "+fen + " b");
+            writer.println("position fen "+fen+ " b");
             writer.println("go depth "+depth);
             writer.flush();
             while (response != null && !response.startsWith("bestmove")) {
-                System.out.println(response);
+                // System.out.println(response);
+                res += response;
+                response = reader.readLine();
+            }
+            System.out.println("response: "+response);
+            System.out.println("result "+ res);
+            return response;
+        }
+        catch (IOException e){
+            System.err.println(e);
+            return "errror";
+        }
+
+    }
+    
+
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/mate")
+    public String acceptConnections() {
+        try{
+            writer.println("uci");
+            writer.flush();
+            String res = "";
+ 
+            String response = reader.readLine();
+            while (response != null && !response.equals("uciok")) {
+                res += response;
+                response = reader.readLine();
+            }
+            String fens = "8/8/8/8/8/8/4k3/4qK2 w - - 0 1";
+            writer.println("position fen "+fens + " b");
+            writer.println("go depth 5");
+            writer.flush();
+            while (response != null && !response.startsWith("bestmove")) {
+                // System.out.println(response);
                 res += response;
                 response = reader.readLine();
             }
@@ -102,7 +153,6 @@ public class ProductController {
         }
 
     }
-    
 
     
 }
