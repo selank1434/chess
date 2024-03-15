@@ -4,10 +4,19 @@ const isValidMove = (x: number, y: number): boolean =>{
     return x >= 0 && x < 8 && y >= 0 && y < 8;
 }
 
-const knight_check = (board: boardSquareProps[][], moves: coordinate[]) => {
+
+export const knight_check = (board: boardSquareProps[][], king_coord: coordinate) => {
+
+    const color = board[king_coord.x][king_coord.y].pieceType?.color;
+    if(!board[king_coord.x][king_coord.y].occupied || board[king_coord.x][king_coord.y].pieceType?.piece !== piece_type.King || color === undefined ){
+        console.error("You have no king here")
+        return false;
+    }
+    const moves = getKnightMoves(king_coord.x,king_coord.y);
+    
     moves.forEach(coord => {
         const piece = board[coord.x][coord.y].pieceType;
-        if (piece?.piece === piece_type.Knight && piece.color === side.black){
+        if (piece?.piece === piece_type.Knight && piece.color === color){
             return true;
         }
     })

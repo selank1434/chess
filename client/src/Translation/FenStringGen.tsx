@@ -1,56 +1,57 @@
-import { boardSquareProps, piece_type, side } from "../types";
-//given an input 
-export const generate_fen_string = (board: boardSquareProps[][]) => {
+import { boardSquareProps, piece_type,piece,side } from "../types";
 
-   let fenString  = "";
-    board.forEach(row => {
-        let count = 0; // Initialize count variable for each row
-        let end = 8;
-        row.forEach(col => {
-            //Ok problem is that 
-            if (!col.occupied) {
-                count++;
-            }
-            else{
-       
-                if(count !== 0){
-                    end-=count
-                    fenString+=count.toString();
-                }
-            
-                fenString+=add_to_fen_string(col);
-                end-=1
-                count = 0;
-            }
-        });
-        //here we also need to get the remaining numbers
-        if(end != 0){
-            fenString+=end.toString();
-        }
-        fenString+="/";
-    });
-
-    return encodeURI(fenString.slice(0, -1));                              
-}
-
-const add_to_fen_string = (boardSquare: boardSquareProps) => {
+export const generateFEN = (board: boardSquareProps[][]): string => {
     
-    if(boardSquare.pieceType?.piece === piece_type.Rook){
-        return boardSquare.pieceType.color === side.black ? 'r' : 'R';
+    //do I have the right board
+    // if (board[5][5].pieceType?.piece !== piece_type.Knight){
+    //     alert("generate Fen Did not get write board");
+    // }
+    
+    
+    let fen = '';
+    
+    for (let row = 0; row < 8; row++) {
+        let emptySquares = 0;
+        for (let col = 0; col < 8; col++) {
+            const square = board[row][col];
+            if (square.occupied) {
+                if (emptySquares > 0) {
+                    fen += emptySquares.toString();
+                    emptySquares = 0;
+                }
+                if(square.pieceType?.piece === piece_type.Rook){
+                //    console.log("yeezy");
+                //    console.log(pieceToFEN(square.pieceType));
+                }
+                // console.log("Piece at row: ", row, "col: ", square.pieceType?.piece);
+                fen += pieceToFEN(square.pieceType);
+            } else {
+                emptySquares++;
+            }
+        }
+        if (emptySquares > 0) {
+            fen += emptySquares.toString();
+        }
+        if (row < 7) {
+            fen += '/';
+        }
     }
-    else if(boardSquare.pieceType?.piece === piece_type.Bishop){
-        return boardSquare.pieceType.color === side.black ? 'b' : 'B';
-    }
-    else if (boardSquare.pieceType?.piece === piece_type.King){
-        return boardSquare.pieceType.color === side.black ? 'k' : 'K';
-    }
-    else if (boardSquare.pieceType?.piece === piece_type.Queen){
-        return boardSquare.pieceType.color === side.black ? 'q' : 'Q';
-    }
-    else if(boardSquare.pieceType?.piece === piece_type.Pawn){
-        return boardSquare.pieceType.color === side.black ? 'p' : 'P';
-    }
-    else{
-        return boardSquare.pieceType?.color === side.black ? 'n' : 'N';
-    }
-}
+
+    return fen;
+};
+
+const pieceToFEN = (p: piece| undefined): string => {
+    if (p === undefined) return ''; // If piece is undefined, return an empty string
+    const pieceToFENMap: { [key in piece_type]: string } = {
+        [piece_type.Rook]: p.color === side.black ? 'r' : 'R',
+        [piece_type.Knight]: p.color === side.black ? 'n': 'N',
+        [piece_type.Bishop]:  p.color === side.black ? 'b':'B',
+        [piece_type.Queen]:  p.color === side.black ? 'q' :'Q',
+        [piece_type.King]: p.color === side.black ? 'k':'K',
+        [piece_type.Pawn]: p.color === side.black? 'p':'P',
+    };
+
+    const fenRepresentation = pieceToFENMap[p.piece];
+    return fenRepresentation;
+};
+

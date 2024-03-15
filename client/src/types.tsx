@@ -22,7 +22,8 @@ export interface coordinate{
 export interface boardProps {
     board: boardSquareProps[][],
     coord: coordinate,
-    setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>
+    setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>,
+    setBlackMove: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 //board squares do not move we just keep the same index 
@@ -42,4 +43,5 @@ export interface boardSquareProps{
     occupied: Boolean,
     pieceType?:piece
 }
+export const no_check: coordinate = {x: -1, y: -1};
 

@@ -7,59 +7,51 @@ import { referee } from './Referee';
 import { getAImove } from '../Translation/SendToServer';
 import { render_piece } from '../App';
 import { Console } from 'console';
+import { check_mate_board } from '../moves/Checkmate';
+import { inCheck } from '../rules/InCheck';
+import { bishop_check } from '../check/BishopCheck';
 
 // Usage example:
-
-
-
 
 //Coord is the coordinate of our tile 
 const Tile: React.FC<{
     board: boardSquareProps[][];
     coord: coordinate;
     setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>;
-}> = ({ board, coord, setBoardState }) => {
+    setBlackMove: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ board, coord, setBoardState, setBlackMove }) => {
 
-    //
+    //This function is checking to see if I can 
     const [{ isOver }, drop] = useDrop({
         accept: 'IMAGE',
         drop(item, monitor) {
+            //I am checking to see if the 
             const dragSource : piece = monitor.getItem();
-            const update = updateOurBoard(coord,setBoardState,dragSource);
-            if (update){
-                setTimeout(() => {
-                    getAImove(board)
-                        .then(response => {
-                            console.log(response);
-                            generate_coordinates(response, setBoardState);
-                        })
-                        .catch(error => {
-                            console.error('Error occurred:', error);
-                        });
-                    }, 1000); 
-                
-            }
-       
-        
-          },
+            console.log("I am draggin near tile x: ", coord.x, " y: ",coord.y);
+            const old_board = board;
+            updateOurBoard(coord,setBoardState,dragSource)
+            setBlackMove(true);
+            },
         collect: (monitor) => ({
             isOver: !!monitor.isOver(),
         }),
     });
-    //we need to know two things where our piece is moving from and where it is
-    const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) : void | boolean => {
-        
-        let updated: boolean = true;
-        setBoardState(prevGrid => {
-            const res = referee(dragSource.curr,coord,prevGrid);
-            if(res === false){
-                updated = false;
-                console.log("ref is saying no");
-                return prevGrid;
+
+    const find_white_king = (board: boardSquareProps[][]): coordinate => {
+        board.forEach((row,x) => row.forEach((col,y) => {
+            if(col.pieceType?.piece === piece_type.King && col.pieceType.color === side.white){
+                const coord: coordinate = {x: x, y: y};
+                return coord;
             }
-            //In our previous grid we have 
 
+        }))
+        return {x:7, y: 4};
+    }
 
+    //This function changes based on the 
+    const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) : void | boolean => {
+        setBoardState(prevGrid => {
+            //if I want to go to the 
             const newGrid = [...prevGrid]; // Copy the outer array
             //where piece is orignally located
             const old_x = dragSource.curr.x;
@@ -67,28 +59,24 @@ const Tile: React.FC<{
             // where  piece wants t fo 
             const new_x = coord.x;
             const new_y = coord.y;
-
-
+            console.log("I think the piece has started at x: ", old_x, " y: ", old_y);
+            console.log("I think that the piece is going to end up at: ", new_x, " y: ", new_y);
 
             
             newGrid[new_x] = [...prevGrid[new_x]]; // Copy inner array
             const temp = dragSource;
             console.log("drag source info " ,temp);
             const new_piece = {...temp, curr: coord};
-            console.log(new_piece);
+            console.log("New piece is this" ,new_piece);
             newGrid[new_x][new_y] = { pieceType: new_piece, occupied: true} as boardSquareProps;
+            console.log("my newGrid new_x is this ",  newGrid[new_x][new_y] )
 
             newGrid[old_x][old_y].occupied = false;
             newGrid[old_x][old_y].pieceType = undefined;
-
-            console.log("My old square is updated as follows x: ", old_x, " y: ", old_y, newGrid[old_x][old_y]);
-            console.log("My new square is updated as follows x: ", new_x, " y: ", new_y, newGrid[new_x][new_y]);
-            console.log("this is our board after we updates ", newGrid);
-
             return newGrid;
 
           });
-          return updated;
+
     }
 
     return (
@@ -149,9 +137,12 @@ const translateChessCoordinatesToIndex = (chessCoordinates: string): [number, nu
 
 
 
-const generate_coordinates = (stockfish_res: String, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>> ) => {;
-    // bestmove e7e5 ponder a2a3
 
+
+
+export const generate_coordinates = (stockfish_res: String, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>> ) => {;
+    // bestmove e7e5 ponder a2a3
+    console.log("res",stockfish_res);
     const move_string = stockfish_res.split(" ")[1];
     const startSquare: string = move_string.substring(0, 2);
     const endSquare: string = move_string.substring(2);
@@ -183,13 +174,8 @@ const generate_coordinates = (stockfish_res: String, setBoardState: React.Dispat
     
         return newGrid;
     });
-    
-    
-
-
-
-
 }
+
 
 
 

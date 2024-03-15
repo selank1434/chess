@@ -24,20 +24,20 @@ const gridItemStyle: React.CSSProperties = {
 
 
 //every borad square needs to know about parent board state otherewise 
-const Boardsquare: React.FC<boardProps> = ({board, coord , setBoardState}) => {
+const Boardsquare: React.FC<boardProps> = ({board, coord , setBoardState, setBlackMove}) => {
   const currSquare: boardSquareProps = board[coord.x][coord.y];
   
 
   if(currSquare.pieceType === undefined){
     return (
       <div style={gridItemStyle}>
-      <Tile board={board} coord={coord} setBoardState={setBoardState}/>
+      <Tile board={board} coord={coord} setBoardState={setBoardState} setBlackMove={setBlackMove}/>
     </div>
     )
   }
   return (
     <div style={gridItemStyle}>
-      <Tile board={board} coord={coord} setBoardState={setBoardState}/>
+      <Tile board={board} coord={coord} setBoardState={setBoardState} setBlackMove={setBlackMove}/>
       <Piece {...currSquare.pieceType}/>
     </div>
   );

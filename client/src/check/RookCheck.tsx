@@ -2,14 +2,18 @@ import { boardSquareProps, coordinate, piece_type, side } from "../types";
 
 
 const helper = (direction: String, board: boardSquareProps[][], x: number, y: number, color: side): boolean => {
+
+    if (board[x][y].pieceType?.piece !== piece_type.Rook){
+        return true;
+    }
     if (board[x][y].pieceType?.color === color ){
         return false;
     }
-    if (board[x][y].pieceType?.piece === piece_type.Rook ){
+    if (board[x][y].pieceType?.piece === piece_type.Rook){
         return true;
     }
 
-    return rook_find(direction,board,x+1,y+1,color);
+    return rook_find(direction,board,x,y,color);
 }
 
 
@@ -42,7 +46,7 @@ const rook_find = (direction: String, board: boardSquareProps[][], x: number, y:
     
 }
 
-const rookCheck = (king_coord: coordinate, board: boardSquareProps[][]) => {
+export const rookCheck = (king_coord: coordinate, board: boardSquareProps[][]) => {
     const directions = ["N","S","W","E"];
     const color = board[king_coord.x][king_coord.y].pieceType?.color
     directions.forEach(dir => {

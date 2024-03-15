@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import white from "../static_elements/white_square.png";
 
@@ -22,8 +22,8 @@ import black_queen from './queen_b.png';
 import white_queen from './queen_w.png';
 import black_king from './king_b.png';
 import white_king from './king_w.png';
-
-
+import { getAImove } from './Translation/SendToServer';
+import { generate_coordinates } from './components/Tile';
 
 
 
@@ -103,12 +103,33 @@ function App() {
   const [board,setBoardState] = useState(generateGrid());
   const [isDropped, setIsDropped] = useState(false);
   const [parent, setParent] = useState<string | null>(null);
+  const [black_move,setBlackMove] = useState(false);
+  useEffect(() => {
+      console.log("Use effect");
+      console.log("It is a black move: ", black_move);
+      if(black_move !== true){
+        return;
+      }
+      console.log("we are calling getAI move")
+      setTimeout(() => {
+        getAImove(board)
+          .then(response => {
+            console.log("My response ",response);
+            generate_coordinates(response, setBoardState);
+            setBlackMove(false);
+        })
+        .catch(error => {
+            console.error('Error occurred:', error);
+        });
+    }, 1000); 
+// }
+}, [board]);
   return (
     <div className="App">
       <header className="App-header">
 
         <DndProvider backend={HTML5Backend}>
-        <Chessboard board={board} setBoardState={setBoardState}/>
+        <Chessboard board={board} setBoardState={setBoardState} setBlackMove={setBlackMove}/>
         </DndProvider>
         <a
           className="App-link"

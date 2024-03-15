@@ -4,8 +4,8 @@ const movingPawn = (piece: piece | undefined, start: coordinate, end: coordinate
     if (piece === undefined){
         return false;
     }
-    console.log(piece);
     if(piece.color === side.black){
+    
         if(start.x === 1){  
 
             return start.x-end.x === -1 || start.x-end.x === -2
