@@ -105,16 +105,13 @@ function App() {
   const [parent, setParent] = useState<string | null>(null);
   const [black_move,setBlackMove] = useState(false);
   useEffect(() => {
-      console.log("Use effect");
-      console.log("It is a black move: ", black_move);
+
       if(black_move !== true){
         return;
       }
-      console.log("we are calling getAI move")
       setTimeout(() => {
         getAImove(board)
           .then(response => {
-            console.log("My response ",response);
             generate_coordinates(response, setBoardState);
             setBlackMove(false);
         })

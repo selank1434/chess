@@ -48,13 +48,13 @@ function possiblePawnMoves(pawn_coord: coordinate , board: boardSquareProps[][])
     return moves.filter(move => isValidMove(move.x, move.y));
 }
 
-export const find_pawn_move = (pawn_coord: coordinate, board: boardSquareProps[][], king_coord: coordinate) => {
+export const pawn_out_of_check = (pawn_coord: coordinate, board: boardSquareProps[][], king_coord: coordinate) => {
     const moves = possiblePawnMoves(pawn_coord,board);
-    moves.forEach(move => {
-        const newBoard = change_board(board,pawn_coord,move);
-        if(!inCheck(king_coord,newBoard)){
+    for (const move of moves) {
+        const newBoard = change_board(board, pawn_coord, move);
+        if (!inCheck(king_coord, newBoard)) {
             return true;
         }
-    })
+    }
     return false;
 }

@@ -1,19 +1,26 @@
-//I need to check if 
-
-import { boardSquareProps, coordinate, piece_type, side } from "../types";
+import { boardSquareProps, coordinate, side, piece_type } from "../types";
 
 
-export const pawn_check = (board: boardSquareProps[][], king_coord: coordinate) => {
-    //I only care about white moves ot check because otherwise what is the point 
+//Ok I am going to check my king_c
+export const pawn_check = (board: boardSquareProps[][], king_coord: coordinate): boolean => {
 
-    const topLeft = board[king_coord.x-1][king_coord.y+1].pieceType;
-    const topRight = board[king_coord.x-1][king_coord.y-1].pieceType;
-    if(topLeft?.color === side.black  && topLeft.piece === piece_type.Pawn){
-        return true;
+    if(board[king_coord.x][king_coord.y].pieceType?.color === side.black){
+        //black king look dia
+        if(board[king_coord.x+1][king_coord.y+1].pieceType?.color === side.white && board[king_coord.x+1][king_coord.y+1].pieceType?.piece === piece_type.Pawn){
+            return true;
+        }
+        if(board[king_coord.x+1][king_coord.y-1].pieceType?.color === side.white && board[king_coord.x+1][king_coord.y-1].pieceType?.piece === piece_type.Pawn){
+            return true;
+        }
     }
-    if(topRight?.color === side.black && topLeft?.piece === piece_type.Pawn){
-        return true;
+    else{
+        if(board[king_coord.x-1][king_coord.y+1].pieceType?.color === side.black && board[king_coord.x+1][king_coord.y+1].pieceType?.piece === piece_type.Pawn){
+            return true;
+        }
+        if(board[king_coord.x-1][king_coord.y-1].pieceType?.color === side.black && board[king_coord.x+1][king_coord.y-1].pieceType?.piece === piece_type.Pawn){
+            return true;
+        }
     }
-   
     return false;
+    
 }

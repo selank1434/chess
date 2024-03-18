@@ -8,7 +8,7 @@ const isValidMove = (x: number, y: number): boolean =>{
 
 
 
-export const findKnightMoves = (knight_coord: coordinate, board: boardSquareProps[][], king_coord: coordinate)  =>{
+export const knight_out_of_check = (knight_coord: coordinate, board: boardSquareProps[][], king_coord: coordinate)  =>{
     const moves: coordinate[] = [];
     const dx = [-2, -1, 1, 2, 2, 1, -1, -2];
     const dy = [1, 2, 2, 1, -1, -2, -2, -1];

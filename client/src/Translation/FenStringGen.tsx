@@ -1,13 +1,7 @@
 import { boardSquareProps, piece_type,piece,side } from "../types";
 
 export const generateFEN = (board: boardSquareProps[][]): string => {
-    
-    //do I have the right board
-    // if (board[5][5].pieceType?.piece !== piece_type.Knight){
-    //     alert("generate Fen Did not get write board");
-    // }
-    
-    
+        
     let fen = '';
     
     for (let row = 0; row < 8; row++) {
@@ -40,7 +34,7 @@ export const generateFEN = (board: boardSquareProps[][]): string => {
     return fen;
 };
 
-const pieceToFEN = (p: piece| undefined): string => {
+export const pieceToFEN = (p: piece| undefined): string => {
     if (p === undefined) return ''; // If piece is undefined, return an empty string
     const pieceToFENMap: { [key in piece_type]: string } = {
         [piece_type.Rook]: p.color === side.black ? 'r' : 'R',
