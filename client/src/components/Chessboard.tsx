@@ -11,12 +11,13 @@ interface ChessboardProps {
   board: boardSquareProps[][];
   setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>;
   setBlackMove: React.Dispatch<React.SetStateAction<boolean>>;
+  setPVP: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 
 
-
-const Chessboard: React.FC<ChessboardProps> = ({ board, setBoardState, setBlackMove }) => {
+//ok the chess board needs to get the 
+const Chessboard: React.FC<ChessboardProps> = ({ board, setBoardState, setBlackMove, setPVP }) => {
   const generateBoardSquare = () => {
     const grid: JSX.Element[] = [];
     board.forEach((row, i) =>
@@ -34,7 +35,8 @@ const Chessboard: React.FC<ChessboardProps> = ({ board, setBoardState, setBlackM
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '0' }}>
       {generateBoardSquare()}
       <div style={{ position: 'absolute', top: 0, right: 0 }}>
-        <Toggle />
+      <Toggle setPVP={setPVP} />
+
       </div>
     </div>
   );

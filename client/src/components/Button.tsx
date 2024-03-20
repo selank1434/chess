@@ -1,13 +1,19 @@
 import React from 'react';
 
-const clicker = () => {
-    alert("hello");
-}
+const clicker = (setPVP: React.Dispatch<React.SetStateAction<boolean>>) => {
+  return () => {
+    setPVP(true);
+  };
+};
 
-export const Toggle = () => {
+type ToggleProps = {
+  setPVP: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Toggle: React.FC<ToggleProps> = ({ setPVP }) => {
   return (
-    <button onClick={clicker}>
-        Player vs Player
+    <button onClick={clicker(setPVP)}>
+      Player vs Player
     </button>
   );
 };

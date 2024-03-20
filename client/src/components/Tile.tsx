@@ -37,17 +37,6 @@ const Tile: React.FC<{
         }),
     });
 
-    const find_white_king = (board: boardSquareProps[][]): coordinate => {
-        board.forEach((row,x) => row.forEach((col,y) => {
-            if(col.pieceType?.piece === piece_type.King && col.pieceType.color === side.white){
-                const coord: coordinate = {x: x, y: y};
-                return coord;
-            }
-
-        }))
-        return {x:7, y: 4};
-    }
-
     //This function changes based on the 
     const updateOurBoard = ( coord: coordinate, setBoardState: React.Dispatch<React.SetStateAction<boardSquareProps[][]>>, dragSource: piece) : void | boolean => {
         setBoardState(prevGrid => {

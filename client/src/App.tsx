@@ -104,9 +104,10 @@ function App() {
   const [isDropped, setIsDropped] = useState(false);
   const [parent, setParent] = useState<string | null>(null);
   const [black_move,setBlackMove] = useState(false);
+  const [pvp,setpvp] = useState(false);
+  //ok If it isthe case 
   useEffect(() => {
-
-      if(black_move !== true){
+      if(black_move !== true || pvp === true){
         return;
       }
       setTimeout(() => {
@@ -126,7 +127,7 @@ function App() {
       <header className="App-header">
 
         <DndProvider backend={HTML5Backend}>
-        <Chessboard board={board} setBoardState={setBoardState} setBlackMove={setBlackMove}/>
+        <Chessboard board={board} setBoardState={setBoardState} setBlackMove={setBlackMove} setPVP={setpvp}/>
         </DndProvider>
         <a
           className="App-link"
